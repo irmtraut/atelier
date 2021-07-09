@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<head>
+    <title>lightbox</title>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        
+    <link href="css/styles.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        
+        body {
+            background-color: rgb(27, 27, 27);
+            padding: 20px;
+        }
+        #1 {
+            padding-bottom: 200px;
+        }
+
+        .figure {
+            float: left;
+            margin-right: 5px;
+        }
+
+        .figure-caption {
+            font-size: 50%;
+            color: lightgrey;
+            padding-left: 5px;
+        }
+
+        .thumbnail {
+            height: 200px;
+            margin-right: 20px;
+            border-radius: 5px;
+            /* offset-x | offset-y | blur-radius | spread-radius | color */
+            box-shadow: 3px 4px 5px 0px rgba(0, 0, 0, 1);
+            background-color: rgb(22, 22, 22);
+            border: 1px solid rgb(94, 93, 93);
+        }
+
+        /* SLIDER */
+        .slidecontainer {
+            top: 80px;
+            left: -20px;
+            position: fixed;
+            /* display: inline-block;
+            transform: scale(70%); */
+            transform: rotate(-90deg);
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #818181;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .9s;
+            transition: opacity .9s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <a class="menu-toggle rounded" href="index.html"><i class="fas fa-times"></i></a>
+    <div id="1" class="container-md" style="display: inline-flexbox;"></div>
+    <div class="slidecontainer">
+        <input id="scale" type="range" min="50" max="700" value="200">
+    </div>
+
+    <script>
+        
+        let imgDir = window.location.href.split('#')[1]; //zb a
+        fetch('images.csv')
+            .then(res => res.text())
+            .then(data => {
+                let imgArr = data.split("\n");
+                //console.log(imgArr);
+                for (let i of imgArr) {
+                    let a = i.split(';');
+                    if (a[0] == imgDir) {
+                        $("#1").append(`<figure class="figure" id="${a[1]}">
+                            <img src="img/${a[1]}" 
+                                class="figure-img img-fluid rounded thumbnail" alt="...">
+                             <figcaption class="figure-caption">
+                                <strong>"${a[5]}"</strong><br>
+                                ${a[1].split('.')[0]}, ${a[4]}, ${a[2]} / ${a[3]}<br>
+                                ${a[6]} <span style="font-style: italic;">${a[7]}</span>
+                             </figcaption>
+                            </figure>`);
+                    }
+                }
+            })
+            .then(c => {
+                $(".figure").click(function () {
+                    if ($(this).find("img").css('width') > '800px') {
+                        $(this).find("img").css('height', $('#scale').val() + 'px');
+                        $(this).find("img").css('width', "auto");
+                        console.log('wird klein');
+                    } else {
+                        $(this).find("img").css('width', "100%");
+                        $(this).find("img").css('height', '100%');
+                        console.log('wird gross');
+                    }
+                });
+
+                $('#scale').on('change', function () {
+                    let v = $(this).val();
+                    $('.figure img').css('height', v + 'px');
+                });
+            });
+    </script>
+</body>
+
+</html>
